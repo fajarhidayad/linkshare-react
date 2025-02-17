@@ -1,0 +1,54 @@
+@import url('https://fonts.googleapis.com/css2?family=Instrument+Sans:ital,wght@0,400..700;1,400..700&display=swap');
+@import 'tailwindcss';
+
+@theme {
+  --color-primary: #633cff;
+  --color-primary-active: #beadff;
+  --color-primary-disabled: #efebff;
+  --font-sans: 'Instrument Sans', serif;
+  --heading-size-m: 32px;
+  --heading-size-s: 16px;
+  --body-size-m: 16px;
+  --body-size-s: 12px;
+}
+
+@utility heading-* {
+  line-height: 150%;
+  font-weight: 600;
+  font-size: --value(--heading-size- *);
+}
+
+@utility body-* {
+  line-height: 150%;
+  font-size: --value(--body-size- *);
+}
+
+@utility container {
+  margin-inline: auto;
+}
+
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+textarea:-webkit-autofill,
+textarea:-webkit-autofill:hover,
+textarea:-webkit-autofill:focus,
+select:-webkit-autofill,
+select:-webkit-autofill:hover,
+select:-webkit-autofill:focus {
+  -webkit-text-fill-color: black;
+  -webkit-box-shadow: 0 0 0px 1000px transparent inset;
+  box-shadow: 0 0 0px 1000px transparent inset;
+  transition: background-color 5000s ease-in-out 0s;
+  color: black;
+}
+
+input[type='password'] {
+  font-family: Verdana;
+  letter-spacing: 0.125em;
+}
+
+input[type='password']:placeholder-shown {
+  font-family: 'Instrument Sans', serif;
+  letter-spacing: 0;
+}
