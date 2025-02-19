@@ -1,9 +1,11 @@
-import { createLazyFileRoute, Link, useNavigate } from '@tanstack/react-router';
+import { createFileRoute, Link, useNavigate } from '@tanstack/react-router';
 import Button from '../components/button';
-import { CheckIcon } from 'lucide-react';
+import { CheckIcon, PlusIcon } from 'lucide-react';
 import MockupImg from '../assets/mockup.png';
+import Logo from '../components/logo';
+import { useAuth } from '../context/auth-context';
 
-export const Route = createLazyFileRoute('/')({
+export const Route = createFileRoute('/')({
   component: IndexPage,
 });
 
@@ -50,24 +52,29 @@ function IndexPage() {
         />
       </section>
       <section className="container max-w-7xl py-10 flex flex-col items-center">
-        <h1 className="font-medium text-5xl mb-11 text-gray-800">
+        <h1 className="font-medium text-4xl mb-11 text-gray-800">
           Pricing Plan
         </h1>
         <ul className="grid grid-cols-2 gap-12">
-          <PricingCard />
-          <PricingCard />
+          <PricingCard title="Free Plan (Forever Free)" price="0" />
+          <PricingCard title="Pro Plan" price="4,99" />
         </ul>
       </section>
       <section className="container max-w-7xl py-10 flex flex-col items-center">
-        <h1 className="font-medium text-5xl mb-11 text-gray-800">
+        <h1 className="font-medium text-4xl mb-11 text-gray-800">
           Frequently Asked Questions (FAQ)
         </h1>
+        <ul className="bg-primary-disabled text-primary px-5 rounded-lg">
+          <FaqItem title="What is devlinks?" />
+          <FaqItem title="Is there a free plan?" />
+          <FaqItem title="Can I customize my page?" />
+        </ul>
       </section>
       <section className="container max-w-7xl py-10 flex flex-col items-center">
-        <h1 className="font-medium text-5xl mb-2 text-gray-800">
+        <h1 className="font-medium text-5xl mb-4 text-gray-800">
           Start sharing smarter today
         </h1>
-        <p className="text-2xl text-gray-600 mb-8">
+        <p className="text-2xl text-gray-500 mb-8">
           Sign up now and turn one link into endless possibilities.
         </p>
         <Button>Get started</Button>
@@ -95,12 +102,11 @@ function IndexPage() {
 
 function Navbar() {
   const navigate = useNavigate();
+  const auth = useAuth();
 
   return (
     <nav className="container max-w-7xl flex items-center justify-between py-6">
-      <Link to="/" className="heading-m font-bold">
-        devlinks
-      </Link>
+      <Logo />
       <div className="flex items-center space-x-10 text-lg text-gray-500">
         <Link to="/" className="hover:text-gray-700 transition duration-200">
           Features
@@ -113,7 +119,11 @@ function Navbar() {
         </Link>
       </div>
       <div className="flex items-center">
-        <Button onClick={() => navigate({ to: '/login' })}>Sign in</Button>
+        {auth.isAuthenticated ? (
+          <Button onClick={() => navigate({ to: '/links' })}>Dashboard</Button>
+        ) : (
+          <Button onClick={() => navigate({ to: '/login' })}>Sign in</Button>
+        )}
       </div>
     </nav>
   );
@@ -130,12 +140,12 @@ function FeaturesCard(props: { title: string; description: string }) {
   );
 }
 
-function PricingCard() {
+function PricingCard(props: { title: string; price: string }) {
   return (
     <li className="px-8 py-7 border border-gray-300 rounded-xl space-y-6">
-      <h3 className="text-lg font-semibold">Free Plan (Forever Free)</h3>
+      <h3 className="text-lg font-semibold">{props.title}</h3>
       <h3 className="text-3xl font-semibold text-gray-800">
-        $0
+        ${props.price}
         <span className="text-lg text-gray-500 font-medium">/month</span>
       </h3>
       <ul className="space-y-3">
@@ -161,6 +171,17 @@ function PricingCard() {
         </li>
       </ul>
       <Button className="w-full">Get Started</Button>
+    </li>
+  );
+}
+
+function FaqItem(props: { title: string }) {
+  return (
+    <li className="py-4 border-b border-b-primary last:border-b-0 max-w-2xl w-xl">
+      <div className="flex items-center justify-between">
+        <p className="font-semibold text-lg">{props.title}</p>
+        <PlusIcon />
+      </div>
     </li>
   );
 }

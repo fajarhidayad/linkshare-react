@@ -14,7 +14,7 @@ const baseStyles =
 const variantStyles: Record<ButtonVariant, string> = {
   primary: 'bg-primary active:bg-primary-active',
   secondary:
-    'bg-transparent border border-primary text-primary active:bg-primary-disabled',
+    'bg-transparent border border-primary text-primary active:bg-primary-disabled hover:bg-primary-disabled',
 };
 
 export default function Button({ variant = 'primary', ...props }: ButtonProps) {

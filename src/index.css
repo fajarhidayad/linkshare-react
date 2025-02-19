@@ -25,6 +25,7 @@
 
 @utility container {
   margin-inline: auto;
+  padding: 2rem;
 }
 
 input:-webkit-autofill,
@@ -51,4 +52,15 @@ input[type='password'] {
 input[type='password']:placeholder-shown {
   font-family: 'Instrument Sans', serif;
   letter-spacing: 0;
+}
+
+.dropdown {
+  transition: transform 150ms ease-in-out opacity 100ms ease-in-out;
+  pointer-events: none;
+}
+
+.dropdown-open {
+  opacity: 1;
+  transform: translateY(0);
+  pointer-events: all;
 }

@@ -6,6 +6,7 @@ import './index.css';
 
 import { routeTree } from './routeTree.gen';
 import { AuthProvider, useAuth } from './context/auth-context';
+import { LinkProvider } from './context/link-context';
 
 const queryClient = new QueryClient();
 
@@ -37,7 +38,9 @@ if (!rootElement.innerHTML) {
     <StrictMode>
       <QueryClientProvider client={queryClient}>
         <AuthProvider>
-          <App />
+          <LinkProvider>
+            <App />
+          </LinkProvider>
         </AuthProvider>
       </QueryClientProvider>
     </StrictMode>

@@ -13,6 +13,8 @@ import { createFileRoute } from '@tanstack/react-router'
 // Import Routes
 
 import { Route as rootRoute } from './routes/__root'
+import { Route as UsernameImport } from './routes/$username'
+import { Route as IndexImport } from './routes/index'
 import { Route as dashboardDashboardImport } from './routes/(dashboard)/_dashboard'
 import { Route as authAuthImport } from './routes/(auth)/_auth'
 import { Route as dashboardDashboardProfileImport } from './routes/(dashboard)/_dashboard.profile'
@@ -24,7 +26,6 @@ import { Route as authAuthLoginImport } from './routes/(auth)/_auth.login'
 
 const dashboardImport = createFileRoute('/(dashboard)')()
 const authImport = createFileRoute('/(auth)')()
-const IndexLazyImport = createFileRoute('/')()
 
 // Create/Update Routes
 
@@ -38,11 +39,17 @@ const authRoute = authImport.update({
   getParentRoute: () => rootRoute,
 } as any)
 
-const IndexLazyRoute = IndexLazyImport.update({
+const UsernameRoute = UsernameImport.update({
+  id: '/$username',
+  path: '/$username',
+  getParentRoute: () => rootRoute,
+} as any)
+
+const IndexRoute = IndexImport.update({
   id: '/',
   path: '/',
   getParentRoute: () => rootRoute,
-} as any).lazy(() => import('./routes/index.lazy').then((d) => d.Route))
+} as any)
 
 const dashboardDashboardRoute = dashboardDashboardImport.update({
   id: '/_dashboard',
@@ -86,7 +93,14 @@ declare module '@tanstack/react-router' {
       id: '/'
       path: '/'
       fullPath: '/'
-      preLoaderRoute: typeof IndexLazyImport
+      preLoaderRoute: typeof IndexImport
+      parentRoute: typeof rootRoute
+    }
+    '/$username': {
+      id: '/$username'
+      path: '/$username'
+      fullPath: '/$username'
+      preLoaderRoute: typeof UsernameImport
       parentRoute: typeof rootRoute
     }
     '/(auth)': {
@@ -201,6 +215,7 @@ const dashboardRouteWithChildren = dashboardRoute._addFileChildren(
 
 export interface FileRoutesByFullPath {
   '/': typeof dashboardDashboardRouteWithChildren
+  '/$username': typeof UsernameRoute
   '/login': typeof authAuthLoginRoute
   '/register': typeof authAuthRegisterRoute
   '/links': typeof dashboardDashboardLinksRoute
@@ -209,6 +224,7 @@ export interface FileRoutesByFullPath {
 
 export interface FileRoutesByTo {
   '/': typeof dashboardDashboardRouteWithChildren
+  '/$username': typeof UsernameRoute
   '/login': typeof authAuthLoginRoute
   '/register': typeof authAuthRegisterRoute
   '/links': typeof dashboardDashboardLinksRoute
@@ -217,7 +233,8 @@ export interface FileRoutesByTo {
 
 export interface FileRoutesById {
   __root__: typeof rootRoute
-  '/': typeof IndexLazyRoute
+  '/': typeof IndexRoute
+  '/$username': typeof UsernameRoute
   '/(auth)': typeof authRouteWithChildren
   '/(auth)/_auth': typeof authAuthRouteWithChildren
   '/(dashboard)': typeof dashboardRouteWithChildren
@@ -230,12 +247,13 @@ export interface FileRoutesById {
 
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths: '/' | '/login' | '/register' | '/links' | '/profile'
+  fullPaths: '/' | '/$username' | '/login' | '/register' | '/links' | '/profile'
   fileRoutesByTo: FileRoutesByTo
-  to: '/' | '/login' | '/register' | '/links' | '/profile'
+  to: '/' | '/$username' | '/login' | '/register' | '/links' | '/profile'
   id:
     | '__root__'
     | '/'
+    | '/$username'
     | '/(auth)'
     | '/(auth)/_auth'
     | '/(dashboard)'
@@ -248,13 +266,15 @@ export interface FileRouteTypes {
 }
 
 export interface RootRouteChildren {
-  IndexLazyRoute: typeof IndexLazyRoute
+  IndexRoute: typeof IndexRoute
+  UsernameRoute: typeof UsernameRoute
   authRoute: typeof authRouteWithChildren
   dashboardRoute: typeof dashboardRouteWithChildren
 }
 
 const rootRouteChildren: RootRouteChildren = {
-  IndexLazyRoute: IndexLazyRoute,
+  IndexRoute: IndexRoute,
+  UsernameRoute: UsernameRoute,
   authRoute: authRouteWithChildren,
   dashboardRoute: dashboardRouteWithChildren,
 }
@@ -270,12 +290,16 @@ export const routeTree = rootRoute
       "filePath": "__root.tsx",
       "children": [
         "/",
+        "/$username",
         "/(auth)",
         "/(dashboard)"
       ]
     },
     "/": {
-      "filePath": "index.lazy.tsx"
+      "filePath": "index.tsx"
+    },
+    "/$username": {
+      "filePath": "$username.tsx"
     },
     "/(auth)": {
       "filePath": "(auth)",
