@@ -1,8 +1,18 @@
 import { createContext, ReactNode, useContext, useState } from 'react';
 
+export interface UserProfile {
+  email: string;
+  username: string;
+  first_name: string;
+  last_name: string;
+  id: string;
+  profile_picture_url: string;
+}
+
 export interface AuthContext {
   isAuthenticated: boolean;
-  login: () => void;
+  profile: UserProfile | null;
+  login: (user: UserProfile) => void;
   logout: () => void;
 }
 
@@ -10,9 +20,11 @@ const AuthContext = createContext<AuthContext | null>(null);
 
 export function AuthProvider(props: { children: ReactNode }) {
   const [isAuth, setIsAuth] = useState(false);
+  const [profile, setProfile] = useState<UserProfile | null>(null);
 
-  function login() {
+  function login(user: UserProfile) {
     setIsAuth(true);
+    setProfile(user);
   }
 
   function logout() {
@@ -20,7 +32,9 @@ export function AuthProvider(props: { children: ReactNode }) {
   }
 
   return (
-    <AuthContext.Provider value={{ isAuthenticated: isAuth, login, logout }}>
+    <AuthContext.Provider
+      value={{ isAuthenticated: isAuth, login, logout, profile }}
+    >
       {props.children}
     </AuthContext.Provider>
   );

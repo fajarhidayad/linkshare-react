@@ -13,8 +13,8 @@ function IndexPage() {
   return (
     <main className="@container">
       <Navbar />
-      <section className="container max-w-7xl py-20 flex justify-between items-center">
-        <div className="space-y-9 max-w-[55%] flex flex-col items-start">
+      <section className="container max-w-7xl py-20 flex flex-col lg:flex-row justify-between items-center">
+        <div className="space-y-9 lg:max-w-[55%] flex flex-col items-start">
           <p className="py-2 px-3 rounded-full border border-gray-500 text-gray-500 text-sm">
             Our new features has been released in v1.0
           </p>
@@ -33,9 +33,9 @@ function IndexPage() {
             <Button variant="secondary">Try demo</Button>
           </div>
         </div>
-        <img src={MockupImg} alt="mockup-image" />
+        <img src={MockupImg} alt="mockup-image" className="hidden lg:block" />
       </section>
-      <section className="container max-w-7xl py-20 grid grid-cols-3 gap-9">
+      <section className="container max-w-7xl py-20 grid grid-cols-1 lg:grid-cols-3 gap-9">
         <FeaturesCard
           title="One Link, Unlimited Connections"
           description="Stop juggling multiple links! Share all your important
@@ -55,7 +55,7 @@ function IndexPage() {
         <h1 className="font-medium text-4xl mb-11 text-gray-800">
           Pricing Plan
         </h1>
-        <ul className="grid grid-cols-2 gap-12">
+        <ul className="grid grid-cols-1 md:grid-cols-2 gap-12">
           <PricingCard title="Free Plan (Forever Free)" price="0" />
           <PricingCard title="Pro Plan" price="4,99" />
         </ul>
@@ -70,11 +70,11 @@ function IndexPage() {
           <FaqItem title="Can I customize my page?" />
         </ul>
       </section>
-      <section className="container max-w-7xl py-10 flex flex-col items-center">
-        <h1 className="font-medium text-5xl mb-4 text-gray-800">
+      <section className="container text-center max-w-7xl py-10 flex flex-col items-center">
+        <h1 className="font-medium text-3xl lg:text-5xl mb-4 text-gray-800">
           Start sharing smarter today
         </h1>
-        <p className="text-2xl text-gray-500 mb-8">
+        <p className="text-lg lg:text-2xl text-gray-500 mb-8">
           Sign up now and turn one link into endless possibilities.
         </p>
         <Button>Get started</Button>
@@ -107,7 +107,7 @@ function Navbar() {
   return (
     <nav className="container max-w-7xl flex items-center justify-between py-6">
       <Logo />
-      <div className="flex items-center space-x-10 text-lg text-gray-500">
+      <div className="hidden lg:flex items-center space-x-10 text-lg text-gray-500">
         <Link to="/" className="hover:text-gray-700 transition duration-200">
           Features
         </Link>
@@ -177,7 +177,7 @@ function PricingCard(props: { title: string; price: string }) {
 
 function FaqItem(props: { title: string }) {
   return (
-    <li className="py-4 border-b border-b-primary last:border-b-0 max-w-2xl w-xl">
+    <li className="py-4 border-b border-b-primary last:border-b-0 max-w-2xl lg:w-xl">
       <div className="flex items-center justify-between">
         <p className="font-semibold text-lg">{props.title}</p>
         <PlusIcon />

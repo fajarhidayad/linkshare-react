@@ -5,6 +5,7 @@ import {
   ChevronDownIcon,
   FacebookIcon,
   GithubIcon,
+  GlobeIcon,
   LinkedinIcon,
   TwitterIcon,
   YoutubeIcon,
@@ -54,6 +55,13 @@ const platforms: PlatformLink[] = [
     label: 'X / Twitter',
     color: '#000',
     icon: TwitterIcon,
+  },
+  {
+    id: 7,
+    value: 'website',
+    label: 'Website',
+    color: '#633CFF',
+    icon: GlobeIcon,
   },
 ];
 

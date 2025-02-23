@@ -4,6 +4,7 @@ import Dropdown from '@/components/dropdown';
 import InputContainer from '@/components/input-container';
 import TabHead from '@/components/tab-head';
 import { PlatformLink, useLink } from '@/context/link-context';
+import { useMutation } from '@tanstack/react-query';
 import { createFileRoute } from '@tanstack/react-router';
 import { EqualIcon, LinkIcon, PlusIcon } from 'lucide-react';
 import { FormEvent, useRef } from 'react';
@@ -17,6 +18,10 @@ function RouteComponent() {
   const { links, addLink, removeLink } = useLink();
 
   const bottomRef = useRef<HTMLDivElement | null>(null);
+
+  // const linkMutation = useMutation({
+  //   mutationFn:
+  // })
 
   function onAddLink() {
     if (links.length > 4) {

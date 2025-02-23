@@ -1,6 +1,11 @@
 import { createFileRoute, Outlet, redirect } from '@tanstack/react-router';
 import { userApi } from '../../api/user';
 import LogoImg from '../../assets/devlinks-logo.png';
+import { UserProfile } from '@/context/auth-context';
+
+interface ProfileData {
+  data: UserProfile;
+}
 
 export const Route = createFileRoute('/(auth)/_auth')({
   component: AuthLayout,
@@ -8,8 +13,8 @@ export const Route = createFileRoute('/(auth)/_auth')({
     let isAuth = false;
 
     try {
-      await userApi.profile();
-      context.auth.login();
+      const profile = (await userApi.profile()) as ProfileData;
+      context.auth.login(profile.data);
       isAuth = true;
     } catch (err) {
       console.error(err);

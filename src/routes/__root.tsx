@@ -5,7 +5,7 @@ import {
 } from '@tanstack/react-router';
 import { TanStackRouterDevtools } from '@tanstack/router-devtools';
 import { ToastContainer } from 'react-toastify';
-import { AuthContext } from '../context/auth-context';
+import { AuthContext, UserProfile } from '../context/auth-context';
 import { QueryClient } from '@tanstack/react-query';
 import { userApi } from '../api/user';
 import Button from '../components/button';
@@ -13,6 +13,10 @@ import Button from '../components/button';
 interface RouterContext {
   auth: AuthContext;
   queryClient: QueryClient;
+}
+
+interface ProfileData {
+  data: UserProfile;
 }
 
 export const Route = createRootRouteWithContext<RouterContext>()({
@@ -25,8 +29,8 @@ export const Route = createRootRouteWithContext<RouterContext>()({
   ),
   async beforeLoad({ context }) {
     try {
-      await userApi.profile();
-      context.auth.login();
+      const profile = (await userApi.profile()) as ProfileData;
+      context.auth.login(profile.data);
     } catch (err) {
       console.error(err);
       return;

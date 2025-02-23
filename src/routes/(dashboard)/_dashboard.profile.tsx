@@ -1,51 +1,197 @@
+import { userApi } from '@/api/user';
+import { useAuth } from '@/context/auth-context';
+import { UpdateProfileDto, updateProfileSchema } from '@/dto/profile.dto';
+import { zodResolver } from '@hookform/resolvers/zod';
+import { useMutation } from '@tanstack/react-query';
 import { createFileRoute } from '@tanstack/react-router';
-import TabHead from '../../components/tab-head';
 import { ImageIcon } from 'lucide-react';
+import { ComponentProps, forwardRef, useRef, useState } from 'react';
+import { Controller, useForm } from 'react-hook-form';
+import { toast } from 'react-toastify';
 import { twMerge } from 'tailwind-merge';
-import InputContainer from '../../components/input-container';
 import Button from '../../components/button';
+import InputContainer from '../../components/input-container';
+import TabHead from '../../components/tab-head';
 
 export const Route = createFileRoute('/(dashboard)/_dashboard/profile')({
   component: RouteComponent,
 });
 
 function RouteComponent() {
+  const { profile } = useAuth();
+  const { control, handleSubmit } = useForm<UpdateProfileDto>({
+    resolver: zodResolver(updateProfileSchema),
+    defaultValues: {
+      username: profile?.username,
+      firstName: profile?.first_name,
+      lastName: profile?.last_name,
+      email: profile?.email,
+    },
+  });
+
+  const [selectedImage, setSelectedImage] = useState<string | null>(() => {
+    if (profile && profile.profile_picture_url) {
+      return import.meta.env.VITE_IMAGE_BASE_URL + profile.profile_picture_url;
+    }
+    return null;
+  });
+  const imageInputRef = useRef<HTMLInputElement | null>(null);
+
+  const profileMutation = useMutation({
+    mutationFn: userApi.updateProfile,
+    onSuccess() {
+      toast.success('Sucessfully updated', {
+        hideProgressBar: true,
+      });
+    },
+    onError(err) {
+      toast.error(err.message, {
+        hideProgressBar: true,
+        theme: 'colored',
+        position: 'bottom-center',
+      });
+    },
+  });
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setSelectedImage(reader.result as string);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  function onSubmitProfile(values: UpdateProfileDto) {
+    const fileSize = imageInputRef.current?.files?.[0].size ?? 0;
+    if (fileSize > 1024000) {
+      toast.error('Image size too big', {
+        hideProgressBar: true,
+        position: 'bottom-center',
+        theme: 'colored',
+      });
+      return;
+    }
+    profileMutation.mutate({
+      ...values,
+      profilePicture: imageInputRef.current?.files?.[0],
+    });
+  }
+
   return (
-    <form className="flex flex-col h-full">
+    <form
+      className="flex flex-col h-full"
+      onSubmit={handleSubmit(onSubmitProfile)}
+    >
       <TabHead
         title="Profile Details"
         description=" Add your details to create a personal touch to your profile."
       />
 
       <BGContainer className="mx-6 md:mx-10 flex flex-col md:flex-row items-start space-y-4 md:space-y-0 md:items-center">
-        <p className="body-m text-gray-500 w-1/3 mr-auto flex-shrink-0">
+        <p className="body-m text-gray-500 lg:w-1/3 flex-shrink-0">
           Profile picture
         </p>
-        <button className="flex flex-col items-center justify-center text-primary heading-s mr-6 bg-primary-disabled py-14 px-10 rounded-xl flex-shrink-0">
-          <ImageIcon className="mb-2" />
-          <span>Upload Image</span>
-        </button>
+        <div className="flex-shrink-0 mr-6">
+          <label
+            htmlFor="image"
+            className="relative cursor-pointer flex flex-col items-center justify-center text-primary heading-s bg-primary-disabled size-48 rounded-xl overflow-hidden"
+          >
+            {selectedImage ? (
+              <>
+                <img
+                  src={selectedImage as string}
+                  alt="profile-picture-preview"
+                  className="bg-cover"
+                />
+                <div className="group text-white z-20 flex flex-col hover:backdrop-blur-sm items-center w-full h-full bg-black/0 justify-center transition duration-150 ease-in-out hover:bg-black/50 absolute top-0">
+                  <ImageIcon
+                    size={30}
+                    className="group-hover:opacity-100 opacity-0 transition duration-150 mb-2"
+                  />
+                  <p className="group-hover:opacity-100 opacity-0 transition duration-150">
+                    Change Image
+                  </p>
+                </div>
+              </>
+            ) : (
+              <>
+                <ImageIcon className="mb-2" />
+                <span>Upload Image</span>
+              </>
+            )}
+          </label>
+          <input
+            ref={imageInputRef}
+            id="image"
+            onChange={handleImageChange}
+            accept="image/png, image/jpeg, image/jpg"
+            type="file"
+            className="hidden"
+          />
+        </div>
         <p className="body-s text-gray-500 flex-shrink-1">
           Image must be below 1024x1024px. Use PNG or JPG format.
         </p>
       </BGContainer>
       <BGContainer className="mx-6 md:mx-10 space-y-3">
-        <FormInput
-          id="firstName"
-          title="First name"
-          placeholder="e.g. John"
-          required
+        <Controller
+          control={control}
+          name="username"
+          render={({ field, fieldState }) => (
+            <FormInput
+              id="username"
+              title="Username"
+              placeholder="e.g. wicked"
+              required
+              errorMessage={fieldState.error?.message}
+              {...field}
+            />
+          )}
         />
-        <FormInput
-          id="lastName"
-          title="Last name"
-          placeholder="e.g. Wick"
-          required
+        <Controller
+          control={control}
+          name="firstName"
+          render={({ field, fieldState }) => (
+            <FormInput
+              id="firstName"
+              title="First name"
+              placeholder="e.g. John"
+              required
+              errorMessage={fieldState.error?.message}
+              {...field}
+            />
+          )}
         />
-        <FormInput
-          id="email"
-          title="Email"
-          placeholder="e.g. johnwick@email.com"
+        <Controller
+          control={control}
+          name="lastName"
+          render={({ field, fieldState }) => (
+            <FormInput
+              id="lastName"
+              title="Last name"
+              placeholder="e.g. Wick"
+              required
+              errorMessage={fieldState.error?.message}
+              {...field}
+            />
+          )}
+        />
+        <Controller
+          control={control}
+          name="email"
+          render={({ field, fieldState }) => (
+            <FormInput
+              id="email"
+              title="Email"
+              type="email"
+              placeholder="e.g. johnwick@email.com"
+              errorMessage={fieldState.error?.message}
+              {...field}
+            />
+          )}
         />
       </BGContainer>
 
@@ -56,29 +202,36 @@ function RouteComponent() {
   );
 }
 
-const FormInput = (props: {
+interface FormInputProps extends ComponentProps<'input'> {
   id: string;
   title: string;
-  required?: boolean;
   placeholder: string;
-}) => {
+  errorMessage?: string;
+}
+
+const FormInput = forwardRef<HTMLInputElement, FormInputProps>((props, ref) => {
   return (
     <div className="flex flex-col md:flex-row md:items-center">
       <label htmlFor={props.id} className="w-1/3 text-gray-500 w- mb-1 md:mb-0">
         {props.title}
         {props.required && <sup className="text-red-500">*</sup>}
       </label>
-      <InputContainer className="bg-white flex-1">
+      <InputContainer className="relative bg-white flex-1">
         <input
-          id={props.id}
+          ref={ref}
           className="bg-transparent focus:outline-0"
-          placeholder={props.placeholder}
           required={props.required}
+          {...props}
         />
+        {props.errorMessage && (
+          <span className="absolute right-5 text-red-500 text-sm">
+            {props.errorMessage}
+          </span>
+        )}
       </InputContainer>
     </div>
   );
-};
+});
 
 const BGContainer = (props: {
   children: React.ReactNode;
