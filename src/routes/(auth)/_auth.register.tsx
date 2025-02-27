@@ -64,6 +64,7 @@ function RegisterPage() {
               className="flex-1 focus:outline-0"
               {...register('email')}
               placeholder="e.g. user@email.com"
+              type="email"
             />
             {formState.errors.email && (
               <p className="text-red-500 text-sm">

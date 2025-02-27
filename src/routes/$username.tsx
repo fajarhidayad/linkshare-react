@@ -27,7 +27,6 @@ export const Route = createFileRoute('/$username')({
         throw: true,
       });
     }
-    console.log(res.data);
     return res.data;
   },
   notFoundComponent: NotFoundPage,

@@ -64,6 +64,7 @@ function LoginPage() {
               id="email"
               className="flex-1 focus:outline-0"
               {...register('email')}
+              type="email"
               placeholder="e.g. user@email.com"
             />
             {formState.errors.email && (
