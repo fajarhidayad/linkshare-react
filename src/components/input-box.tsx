@@ -7,7 +7,7 @@ interface InputContainerProps {
   className?: string;
 }
 
-const InputContainer = forwardRef<HTMLDivElement, InputContainerProps>(
+const InputBox = forwardRef<HTMLDivElement, InputContainerProps>(
   (props, ref) => {
     return (
       <div
@@ -23,4 +23,4 @@ const InputContainer = forwardRef<HTMLDivElement, InputContainerProps>(
   }
 );
 
-export default InputContainer;
+export default InputBox;

@@ -1,4 +1,3 @@
-import { PlatformLink, useLink } from '@/context/link-context';
 import clsx from 'clsx';
 import {
   BatteryMediumIcon,
@@ -11,67 +10,53 @@ import {
   YoutubeIcon,
 } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
-import InputContainer from './input-container';
+import InputBox from './input-box';
 
-const platforms: PlatformLink[] = [
+const platforms = [
   {
     id: 1,
-    value: 'youtube',
-    label: 'YouTube',
-    color: '#ee3939',
+    platform: 'YouTube',
     icon: YoutubeIcon,
   },
   {
     id: 2,
-    value: 'github',
-    label: 'GitHub',
-    color: '#1A1A1A',
+    platform: 'GitHub',
     icon: GithubIcon,
   },
   {
     id: 3,
-    value: 'linkedin',
-    label: 'LinkedIn',
-    color: '#2d68ff',
+    platform: 'LinkedIn',
     icon: LinkedinIcon,
   },
   {
     id: 4,
-    value: 'medium',
-    label: 'Medium',
-    color: '#252525',
+    platform: 'Medium',
     icon: BatteryMediumIcon,
   },
   {
     id: 5,
-    value: 'facebook',
-    label: 'Facebook',
-    color: '#2442AC',
+    platform: 'Facebook',
     icon: FacebookIcon,
   },
   {
     id: 6,
-    value: 'twitter',
-    label: 'X / Twitter',
-    color: '#000',
+    platform: 'Twitter / X',
     icon: TwitterIcon,
   },
   {
     id: 7,
-    value: 'website',
-    label: 'Website',
-    color: '#633CFF',
+    platform: 'Website',
     icon: GlobeIcon,
   },
 ];
 
-export default function Dropdown(props: {
-  id: number;
-  activePlatform: PlatformLink | null;
+export default function DropdownInputPlatform(props: {
+  onChange: (value: string) => void;
+  value: string;
 }) {
   const [menu, setMenu] = useState(false);
 
-  const { updateLink } = useLink();
+  // const { updateLink } = useLink();
 
   const ref = useRef<HTMLDivElement | null>(null);
 
@@ -79,9 +64,9 @@ export default function Dropdown(props: {
     setMenu((prev) => !prev);
   }
 
-  function onClickPlatform(platform: PlatformLink) {
-    updateLink(props.id, platform);
-    console.log(props.id, platform);
+  function onClickPlatform(value: string) {
+    // updateLink(props.id, platform);
+    props.onChange(value);
     toggleDropdown();
   }
 
@@ -100,12 +85,16 @@ export default function Dropdown(props: {
   }, [ref]);
 
   return (
-    <InputContainer ref={ref} className="relative flex items-center bg-white">
-      <button onClick={toggleDropdown} className="w-full flex items-center">
-        {props.activePlatform?.label ? (
+    <InputBox ref={ref} className="relative flex items-center bg-white">
+      <button
+        onClick={toggleDropdown}
+        type="button"
+        className="w-full flex items-center"
+      >
+        {props.value ? (
           <>
-            <props.activePlatform.icon className="mr-3" />
-            {<span>{props.activePlatform.label}</span>}
+            {/* <props.activePlatform.icon className="mr-3" /> */}
+            {<span>{props.value}</span>}
           </>
         ) : (
           <p>Choose Platform</p>
@@ -126,14 +115,17 @@ export default function Dropdown(props: {
           }
         )}
       >
-        {platforms.map((platform) => (
-          <LinkItem key={platform.id} onClick={() => onClickPlatform(platform)}>
-            <platform.icon size={20} />
-            <p>{platform.label}</p>
+        {platforms.map((link) => (
+          <LinkItem
+            key={link.id}
+            onClick={() => onClickPlatform(link.platform)}
+          >
+            <link.icon size={20} />
+            <p>{link.platform}</p>
           </LinkItem>
         ))}
       </ul>
-    </InputContainer>
+    </InputBox>
   );
 }
 

@@ -21,12 +21,15 @@ export const request = async <T>(
   url: string,
   data?: unknown,
   config?: AxiosRequestConfig
-): Promise<T> => {
+): Promise<T | null> => {
   try {
     const response = await api.request<T>({ method, url, data, ...config });
     return response.data;
   } catch (error) {
     if (error instanceof AxiosError) {
+      if (error.status === 404) {
+        return null;
+      }
       throw new Error(error.response?.data.message || 'API Error');
     }
     console.error(error);

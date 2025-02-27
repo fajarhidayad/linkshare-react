@@ -1,5 +1,5 @@
 import { createFileRoute, Link } from '@tanstack/react-router';
-import InputContainer from '../../components/input-container';
+import InputBox from '../../components/input-box';
 import { LockKeyholeIcon, MailIcon } from 'lucide-react';
 import Button from '../../components/button';
 import { useForm } from 'react-hook-form';
@@ -57,7 +57,7 @@ function RegisterPage() {
           <label className="body-s mb-1" htmlFor="email">
             Email address
           </label>
-          <InputContainer>
+          <InputBox>
             <MailIcon className="mr-3 text-gray-500" size={15} />
             <input
               id="email"
@@ -70,13 +70,13 @@ function RegisterPage() {
                 {formState.errors.email.message}
               </p>
             )}
-          </InputContainer>
+          </InputBox>
         </div>
         <div className="mb-6">
           <label className="body-s mb-1" htmlFor="password">
             Create password
           </label>
-          <InputContainer>
+          <InputBox>
             <LockKeyholeIcon className="mr-3 text-gray-500" size={15} />
             <input
               className="flex-1 focus:outline-0 tracking-widest"
@@ -90,13 +90,13 @@ function RegisterPage() {
                 {formState.errors.password.message}
               </p>
             )}
-          </InputContainer>
+          </InputBox>
         </div>
         <div className="mb-6">
           <label className="body-s mb-1" htmlFor="confirmPassword">
             Confirm password
           </label>
-          <InputContainer>
+          <InputBox>
             <LockKeyholeIcon className="mr-3 text-gray-500" size={15} />
             <input
               className="flex-1 focus:outline-0"
@@ -110,7 +110,7 @@ function RegisterPage() {
                 {formState.errors.confirmPassword.message}
               </p>
             )}
-          </InputContainer>
+          </InputBox>
         </div>
         <p className="body-s mb-6 text-gray-500">
           Password must contain at least 8 characters

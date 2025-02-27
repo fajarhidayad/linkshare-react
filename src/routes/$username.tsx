@@ -1,29 +1,36 @@
-import { useLink } from '@/context/link-context';
-import { createFileRoute, useNavigate } from '@tanstack/react-router';
+import { userApi } from '@/api/user';
+import NotFoundPage from '@/components/not-found-page';
+import { imageUrl } from '@/utils/imageUrl';
+import { createFileRoute, notFound, useNavigate } from '@tanstack/react-router';
 import { ArrowRightIcon, LinkIcon } from 'lucide-react';
+import { toast } from 'react-toastify';
 import Button from '../components/button';
 import { useAuth, UserProfile } from '../context/auth-context';
-import { toast } from 'react-toastify';
-import { userApi } from '@/api/user';
-import { imageUrl } from '@/utils/imageUrl';
 
 interface ProfileData {
   data: {
     user: UserProfile;
+    links: {
+      id: number;
+      platform: string;
+      url: string;
+    }[];
   };
 }
 
 export const Route = createFileRoute('/$username')({
   component: PreviewPage,
   async loader({ params }) {
-    try {
-      const res = (await userApi.publicProfile(params.username)) as ProfileData;
-      return res.data;
-    } catch (error) {
-      console.log(error);
-      return;
+    const res = (await userApi.publicProfile(params.username)) as ProfileData;
+    if (!res) {
+      notFound({
+        throw: true,
+      });
     }
+    console.log(res.data);
+    return res.data;
   },
+  notFoundComponent: NotFoundPage,
 });
 
 function PreviewPage() {
@@ -31,7 +38,6 @@ function PreviewPage() {
 
   const navigate = useNavigate();
   const auth = useAuth();
-  const { links } = useLink();
 
   function copyLinkToClipboard() {
     navigator.clipboard.writeText(window.location.href);
@@ -67,7 +73,7 @@ function PreviewPage() {
         </nav>
       )}
 
-      <section className="w-full bg-transparent sm:bg-white sm:shadow-xl rounded-3xl py-12 px-12 sm:px-14 sm:w-sm">
+      <section className="w-full bg-transparent sm:bg-white sm:shadow-xl rounded-3xl py-12 px-12 sm:px-14 sm:w-sm z-10">
         <div className="flex flex-col items-center mb-14 text-center">
           <div className="border-4 border-primary size-24 rounded-full bg-gray-100 mb-6 overflow-hidden">
             {profile?.user.profile_picture_url && (
@@ -84,16 +90,18 @@ function PreviewPage() {
         </div>
 
         <div className="space-y-5">
-          {links.map((link) => (
-            <button
+          {profile.links.map((link) => (
+            <a
+              href={link.url}
               key={link.id}
-              className="p-4 text-white body-m flex items-center rounded-lg w-full hover:cursor-pointer hover:scale-105 transition duration-150"
-              style={{ backgroundColor: link.color }}
+              target="_blank"
+              className="bg-primary p-4 text-white body-m flex items-center rounded-lg w-full hover:cursor-pointer hover:scale-105 transition duration-150"
+              // style={{ backgroundColor: link.color }}
             >
-              <link.icon size={16} />
-              <p className="ml-3 mr-auto">{link.label}</p>
+              {/* <link.icon size={16} /> */}
+              <p className="ml-3 mr-auto">{link.platform}</p>
               <ArrowRightIcon />
-            </button>
+            </a>
           ))}
         </div>
       </section>

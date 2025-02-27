@@ -1,23 +1,33 @@
 import { userApi } from '@/api/user';
-import { useAuth } from '@/context/auth-context';
+import { useAuth, UserProfile } from '@/context/auth-context';
 import { UpdateProfileDto, updateProfileSchema } from '@/dto/profile.dto';
 import { zodResolver } from '@hookform/resolvers/zod';
 import { useMutation } from '@tanstack/react-query';
-import { createFileRoute } from '@tanstack/react-router';
+import { createFileRoute, useRouter } from '@tanstack/react-router';
 import { ImageIcon } from 'lucide-react';
 import { ComponentProps, forwardRef, useRef, useState } from 'react';
 import { Controller, useForm } from 'react-hook-form';
 import { toast } from 'react-toastify';
 import { twMerge } from 'tailwind-merge';
 import Button from '../../components/button';
-import InputContainer from '../../components/input-container';
-import TabHead from '../../components/tab-head';
+import InputBox from '../../components/input-box';
+import TabHead from '../../components/tab-header';
+
+interface ProfileData {
+  data: UserProfile;
+}
 
 export const Route = createFileRoute('/(dashboard)/_dashboard/profile')({
   component: RouteComponent,
+  async loader({ context }) {
+    const profile = (await userApi.profile()) as ProfileData;
+    context.auth.login(profile.data);
+  },
 });
 
 function RouteComponent() {
+  const router = useRouter();
+
   const { profile } = useAuth();
   const { control, handleSubmit } = useForm<UpdateProfileDto>({
     resolver: zodResolver(updateProfileSchema),
@@ -42,7 +52,10 @@ function RouteComponent() {
     onSuccess() {
       toast.success('Sucessfully updated', {
         hideProgressBar: true,
+        position: 'bottom-center',
+        theme: 'colored',
       });
+      router.invalidate();
     },
     onError(err) {
       toast.error(err.message, {
@@ -65,7 +78,10 @@ function RouteComponent() {
   };
 
   function onSubmitProfile(values: UpdateProfileDto) {
-    const fileSize = imageInputRef.current?.files?.[0].size ?? 0;
+    const fileSize =
+      (imageInputRef.current?.files && imageInputRef.current?.files?.length > 0
+        ? imageInputRef.current?.files?.[0].size
+        : null) ?? 0;
     if (fileSize > 1024000) {
       toast.error('Image size too big', {
         hideProgressBar: true,
@@ -216,7 +232,7 @@ const FormInput = forwardRef<HTMLInputElement, FormInputProps>((props, ref) => {
         {props.title}
         {props.required && <sup className="text-red-500">*</sup>}
       </label>
-      <InputContainer className="relative bg-white flex-1">
+      <InputBox className="relative bg-white flex-1">
         <input
           ref={ref}
           className="bg-transparent focus:outline-0"
@@ -228,7 +244,7 @@ const FormInput = forwardRef<HTMLInputElement, FormInputProps>((props, ref) => {
             {props.errorMessage}
           </span>
         )}
-      </InputContainer>
+      </InputBox>
     </div>
   );
 });

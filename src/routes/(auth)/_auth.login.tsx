@@ -5,7 +5,7 @@ import { LockKeyholeIcon, MailIcon } from 'lucide-react';
 import { useForm } from 'react-hook-form';
 import { authApi } from '../../api/auth';
 import Button from '../../components/button';
-import InputContainer from '../../components/input-container';
+import InputBox from '../../components/input-box';
 import { LoginRequest, loginSchema } from '../../dto/auth.dto';
 import { ReactNode } from 'react';
 import { toast } from 'react-toastify';
@@ -58,7 +58,7 @@ function LoginPage() {
           <label className="body-s mb-1" htmlFor="email">
             Email address
           </label>
-          <InputContainer>
+          <InputBox>
             <MailIcon className="mr-3 text-gray-500" size={15} />
             <input
               id="email"
@@ -71,13 +71,13 @@ function LoginPage() {
                 {formState.errors.email.message}
               </TextErrorMessage>
             )}
-          </InputContainer>
+          </InputBox>
         </div>
         <div className="mb-6">
           <label className="body-s mb-1" htmlFor="password">
             Password
           </label>
-          <InputContainer>
+          <InputBox>
             <LockKeyholeIcon className="mr-3 text-gray-500" size={15} />
             <input
               className="flex-1 focus:outline-0 pw-input"
@@ -91,7 +91,7 @@ function LoginPage() {
                 {formState.errors.password.message}
               </TextErrorMessage>
             )}
-          </InputContainer>
+          </InputBox>
         </div>
         <Button
           type="submit"

@@ -1,14 +1,9 @@
-import { CircleHelpIcon, LucideProps } from 'lucide-react';
 import { createContext, ReactNode, useContext, useState } from 'react';
 
 export interface PlatformLink {
   id: number;
-  value: string;
-  label: string;
-  color: string;
-  icon: React.ForwardRefExoticComponent<
-    Omit<LucideProps, 'ref'> & React.RefAttributes<SVGSVGElement>
-  >;
+  platform: string;
+  url: string;
 }
 
 export interface LinkContext {
@@ -16,6 +11,7 @@ export interface LinkContext {
   addLink: () => void;
   updateLink: (id: number, link: PlatformLink) => void;
   removeLink: (id: number) => void;
+  setLink: (links: PlatformLink[]) => void;
 }
 
 const LinkContext = createContext<LinkContext | null>(null);
@@ -24,15 +20,14 @@ export function LinkProvider(props: { children: ReactNode }) {
   const [links, setLinks] = useState<PlatformLink[]>([]);
 
   function addLink() {
-    if (links.find((link) => link.id === 0) || links.length > 4) return;
+    // if (links.find((link) => link.id === 0) || links.length > 4) return;
+    if (links.length > 4) return;
     setLinks((prev) => [
       ...prev,
       {
         id: 0,
-        color: '#EFEFEF',
-        icon: CircleHelpIcon,
-        label: '',
-        value: '',
+        platform: '',
+        url: '',
       },
     ]);
     return;
@@ -58,7 +53,9 @@ export function LinkProvider(props: { children: ReactNode }) {
   }
 
   return (
-    <LinkContext.Provider value={{ links, addLink, removeLink, updateLink }}>
+    <LinkContext.Provider
+      value={{ links, addLink, removeLink, updateLink, setLink: setLinks }}
+    >
       {props.children}
     </LinkContext.Provider>
   );

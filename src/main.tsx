@@ -6,7 +6,7 @@ import './index.css';
 
 import { routeTree } from './routeTree.gen';
 import { AuthProvider, useAuth } from './context/auth-context';
-import { LinkProvider } from './context/link-context';
+import { LinkProvider, useLink } from './context/link-context';
 
 const queryClient = new QueryClient();
 
@@ -28,7 +28,9 @@ declare module '@tanstack/react-router' {
 
 const App = () => {
   const auth = useAuth();
-  return <RouterProvider router={router} context={{ auth }} />;
+  const links = useLink();
+
+  return <RouterProvider router={router} context={{ auth, links }} />;
 };
 
 const rootElement = document.getElementById('root')!;
