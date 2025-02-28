@@ -235,7 +235,7 @@ const FormInput = forwardRef<HTMLInputElement, FormInputProps>((props, ref) => {
       <InputBox className="relative bg-white flex-1">
         <input
           ref={ref}
-          className="bg-transparent focus:outline-0"
+          className="bg-transparent focus:outline-0 w-full"
           required={props.required}
           {...props}
         />

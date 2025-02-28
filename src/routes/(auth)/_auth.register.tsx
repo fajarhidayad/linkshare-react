@@ -1,4 +1,4 @@
-import { createFileRoute, Link } from '@tanstack/react-router';
+import { createFileRoute, Link, useNavigate } from '@tanstack/react-router';
 import InputBox from '../../components/input-box';
 import { LockKeyholeIcon, MailIcon } from 'lucide-react';
 import Button from '../../components/button';
@@ -22,12 +22,20 @@ const registerSchema = z.object({
 type RegisterReq = z.infer<typeof registerSchema>;
 
 function RegisterPage() {
+  const navigate = useNavigate();
+
   const { register, handleSubmit, formState } = useForm<RegisterReq>({
     resolver: zodResolver(registerSchema),
   });
 
   const registerMutation = useMutation({
     mutationFn: authApi.register,
+    onSuccess() {
+      navigate({
+        to: '/links',
+        replace: true,
+      });
+    },
     onError(error) {
       console.error(error);
       toast.error(error.message, {
